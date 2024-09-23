@@ -1,0 +1,8 @@
+name: MCBossEngine
+version: '1.0-SNAPSHOT'
+main: io.github.pikapikagfy.mcBossEngine.MCBossEngine
+api-version: '1.21'
+commands:
+  spawn:
+    description: Spawns a boss at the player's location
+    usage: /spawn <bossName>

@@ -1,0 +1,31 @@
+bosses:
+  FireDragon:
+    type: dragon
+    health: 500
+    speed: 0.3
+    size: 2.0
+    parts:
+      - type: pig
+        size: 1.5
+        offset: [0, 2, 0]
+        collision: true
+        can_take_damage: true
+      - type: zombie
+        size: 1.0
+        offset: [1, 0, 1]
+        collision: false
+        can_take_damage: false
+  WildBull:
+    type: zombie
+    health: 300
+    speed: 0.25
+    size: 1.0
+
+skills:
+  FireDragon:
+    - type: summon
+      waves: 3
+      entities_per_wave: 5
+      entity_type: zombie
+      summon_range: 10
+      summon_location: boss_around
