@@ -1,30 +1,38 @@
 package io.github.pikapikagfy.mcBossEngine;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
 public class MCBossEngine extends JavaPlugin {
+    private static MCBossEngine instance; // 定义静态实例
     private ConfigReader configReader;
     private BossConfig bossConfig;
     private SkillConfig skillConfig;
     private BossBuilder bossBuilder;
 
+    public static MCBossEngine getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
+        instance = this; // 初始化静态实例
         // 加载配置文件
         this.saveDefaultConfig();  // 确保默认配置加载
+
         configReader = new ConfigReader(this);  // 传入插件实例
 
         bossConfig = configReader.loadBossConfig();
         skillConfig = configReader.loadSkillConfig();
 
-        // 初始化 BossBuilder
-        bossBuilder = new BossBuilder(bossConfig);
+        // 初始化 BossBuilder，传递插件实例
+        bossBuilder = new BossBuilder(bossConfig, this);
 
         getLogger().info("BossEngine plugin enabled!");
     }
+
     @Override
     public void onDisable() {
         getLogger().info("BossEngine plugin disabled!");
@@ -59,3 +67,4 @@ public class MCBossEngine extends JavaPlugin {
         return false;
     }
 }
+

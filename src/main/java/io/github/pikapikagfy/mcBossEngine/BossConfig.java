@@ -1,5 +1,6 @@
 package io.github.pikapikagfy.mcBossEngine;
 
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -15,11 +16,6 @@ public class BossConfig {
         this.config = config;
     }
 
-    /**
-     * 获取指定 Boss 的配置信息
-     * @param bossName Boss 的名字
-     * @return 返回包含 Boss 配置的 Map
-     */
     public Map<String, Object> getBossData(String bossName) {
         ConfigurationSection bossSection = config.getConfigurationSection("bosses." + bossName);
         if (bossSection == null) return null;
@@ -32,43 +28,41 @@ public class BossConfig {
         bossData.put("speed", bossSection.getDouble("speed"));
         bossData.put("size", bossSection.getDouble("size"));
 
-        // 获取 parts 部分
-        List<Map<String, Object>> partsData = getPartsData(bossSection.getConfigurationSection("parts"));
+        // 获取 parts 部分 (作为列表)
+        List<Map<String, Object>> partsData = getPartsData(bossSection);
         bossData.put("parts", partsData);
 
         return bossData;
     }
 
-    /**
-     * 获取 Boss 身体组件的配置信息
-     * @param partsSection 配置文件中的 "parts" 部分
-     * @return 返回每个部分的配置信息
-     */
-    private List<Map<String, Object>> getPartsData(ConfigurationSection partsSection) {
+    private List<Map<String, Object>> getPartsData(ConfigurationSection bossSection) {
         List<Map<String, Object>> parts = new ArrayList<>();
-        if (partsSection == null) return parts;
 
-        for (String partKey : partsSection.getKeys(false)) {
-            ConfigurationSection partSection = partsSection.getConfigurationSection(partKey);
-            if (partSection == null) continue;
+        // 获取 parts 列表
+        List<Map<?, ?>> partsList = bossSection.getMapList("parts");
+        if (partsList == null || partsList.isEmpty()) return parts;
 
+        // 遍历 parts 列表
+        for (Map<?, ?> partMap : partsList) {
             Map<String, Object> partData = new HashMap<>();
-            partData.put("type", partSection.getString("type"));
-            partData.put("size", partSection.getDouble("size"));
 
-            // 获取位置偏移量
-            List<Double> offset = partSection.getDoubleList("offset");
+            partData.put("type", partMap.get("type"));
+            partData.put("size", partMap.get("size"));
+
+            // 获取偏移量
+            List<Double> offset = (List<Double>) partMap.get("offset");
             partData.put("offset", offset);
 
-            // 获取是否有碰撞箱和是否可受伤的属性
-            partData.put("collision", partSection.getBoolean("collision"));
-            partData.put("can_take_damage", partSection.getBoolean("can_take_damage"));
+            // 获取碰撞和受伤属性
+            partData.put("collision", partMap.get("collision"));
+            partData.put("can_take_damage", partMap.get("can_take_damage"));
 
             parts.add(partData);
         }
 
         return parts;
     }
+
 
     /**
      * 获取所有 Boss 的名称
